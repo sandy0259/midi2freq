@@ -1,4 +1,8 @@
-
+/*
+This code is taken from The Audio Programming Book, Chapter 1, Listing 1.3
+It has been updated to use 'fgets(char *restrict, int, FILE *)' instead of
+'gets()' as that function has been depricated and is dangerous to use.
+*/
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
@@ -28,18 +32,13 @@ int main() {
     //support it.
     //instead use: fgets(<#char *restrict#>, <#int#>, <#FILE *#>)
     //if getting input from stdio, use 'stdin' for the third argument
-    result = fgets(message, 8, stdin);
+    result = fgets(message, 5, stdin);
     if(result == NULL){
         printf("There was an error reading the input.\n");
         return 1;
     }
     if(message[0] == '\0'){
         printf("Have a nice day.\n");
-        return 1;
-    }
-    
-    if(strlen(message) > 4){
-        printf("Number must be between 0-127.\n");
         return 1;
     }
     
@@ -50,7 +49,7 @@ int main() {
         return 1;
     }
     if(midinote > 127){
-        printf("Sorry - %s is beyond the MIDI range.\n", message);
+        printf("Sorry - that number is beyond the MIDI range.\n");
         return 1;
     }
     //calculate a frequency for a given Midi Note Number
