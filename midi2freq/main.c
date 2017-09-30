@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include <string.h>
 int main() {
     
     double semitone_ratio;
@@ -21,13 +22,24 @@ int main() {
     c0 = c5 * pow(0.5, 5);
     
     printf("Enter MIDI note (0-127):");
-    result = fgets(message, 3, stdin);
+    //the book uses gets() which is dangerous if you don't know
+    //exactly how big the entry will be. Modern compilers will
+    //warn that this is a dangerous function, but they will still
+    //support it.
+    //instead use: fgets(<#char *restrict#>, <#int#>, <#FILE *#>)
+    //if getting input from stdio, use 'stdin' for the third argument
+    result = fgets(message, 8, stdin);
     if(result == NULL){
         printf("There was an error reading the input.\n");
         return 1;
     }
     if(message[0] == '\0'){
-        printf("Have a nice day.");
+        printf("Have a nice day.\n");
+        return 1;
+    }
+    
+    if(strlen(message) > 4){
+        printf("Number must be between 0-127.\n");
         return 1;
     }
     
