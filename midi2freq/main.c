@@ -16,6 +16,8 @@ int main() {
     int midinote = 150; //...given this note
     //setting midinote to arbitrary invalid value so that if user does not
     //enter an int, it will return with an error.
+    int choice = 0;
+    double userfreq = 0;
 
     //calculate the required numbers
     semitone_ratio = pow(2, 1/12.0);
@@ -23,32 +25,46 @@ int main() {
     c5 = 220.0 * pow(semitone_ratio, 3);
     //Midi Note 0 is C, 5 octaves below Middle C
     c0 = c5 * pow(0.5, 5);
-    
-    printf("Enter MIDI note (0-127):");
-    //the book uses gets() which is dangerous if you don't know
-    //exactly how big the entry will be. Modern compilers will
-    //warn that this is a dangerous function, but they will still
-    //support it.
-    //instead use: scanf to take an int.
-    
-    scanf("%d", &midinote);
-    //check for erroneous input
-    if(midinote == 150){
-        printf("Please enter a valid integer 0-127\n");
+    printf("(1) Convert midi note to frequency\n"
+           "(2) Convert frequency to midi note\n"
+           "Choose a conversion: ");
+    scanf("%d", &choice);
+    if(choice != 1 && choice != 2){
+        printf("Please enter 1 or 2\n");
         return 1;
     }
-    if(midinote < 0){
-        printf("Please enter a valid integer 0-127\n");
-        return 2;
+    //Convert MIDI note to frequency
+    if(choice == 1){
+        printf("Enter MIDI note (0-127):");
+        scanf("%d", &midinote);
+        //check for erroneous input
+        if(midinote == 150){
+            printf("Please enter a valid integer 0-127\n");
+            return 2;
+        }
+        if(midinote < 0){
+            printf("Please enter a valid integer 0-127\n");
+            return 3;
+        }
+        if(midinote > 127){
+            printf("Please enter a valid integer 0-127.\n");
+            return 4;
+        }
+        //calculate a frequency for a given Midi Note Number
+        frequency = c0 * pow(semitone_ratio, midinote);
+        
+        printf("MIDI Note %d has frequency %f\n", midinote, frequency);
     }
-    if(midinote > 127){
-        printf("Please enter a valid integer 0-127.\n");
-        return 3;
+    if(choice == 2){
+        printf("Enter frequency:");
+        scanf("%lf", &userfreq);
+        if(userfreq < 8.175799 || userfreq > 12543.853951){
+            printf("That frequency does not have a MIDI number.\n"
+                   "Please enter a frequency between 8.175 and 12543.854\n");
+            return 5;
+        }
+        midinote = log(userfreq / c0) / log(semitone_ratio);
+        printf("The closest MIDI note to %lf is %d\n", userfreq, midinote);
     }
-    //calculate a frequency for a given Midi Note Number
-    frequency = c0 * pow(semitone_ratio, midinote);
-   
-    printf("MIDI Note %d has frequency %f\n", midinote, frequency);
-
     return 0;
 }
