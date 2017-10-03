@@ -52,7 +52,6 @@ int main() {
         }
         //calculate a frequency for a given Midi Note Number
         frequency = c0 * pow(semitone_ratio, midinote);
-        
         printf("MIDI Note %d has frequency %f\n", midinote, frequency);
     }
     if(choice == 2){
@@ -63,8 +62,11 @@ int main() {
                    "Please enter a frequency between 8.175 and 12543.854\n");
             return 5;
         }
+        double midinotedec = log(userfreq / c0) / log(semitone_ratio);
         midinote = log(userfreq / c0) / log(semitone_ratio);
-        printf("The closest MIDI note to %lf is %d\n", userfreq, midinote);
+        int variance = (midinotedec - midinote)*100;
+        printf("The closest MIDI note to %.2f is %d\n", userfreq, midinote);
+        printf("with a variance of %d%%\n", variance);
     }
     return 0;
 }
