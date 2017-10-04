@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
-int main() {
+int main(int argc, char* argv[]) {
     
     double semitone_ratio;
     double c0; //for frequency of MIDI Note 0
@@ -16,8 +16,16 @@ int main() {
     int midinote = 150; //...given this note
     //setting midinote to arbitrary invalid value so that if user does not
     //enter an int, it will return with an error.
-    int choice = 0;
+    char* choice = argv[1];
     double userfreq = 0;
+    
+    if(argc != 3){
+        printf("midi2freq can convert a MIDI number to a frequency"
+               " and vice versa.\nThe program takes a conversion type"
+               "(m2f or f2m) and a value to convert (midi number or frequency)\n"
+               "For example:\n\t./midi2freq m2f 21\n");
+        return 1;
+    }
 
     //calculate the required numbers
     semitone_ratio = pow(2, 1/12.0);
@@ -25,18 +33,11 @@ int main() {
     c5 = 220.0 * pow(semitone_ratio, 3);
     //Midi Note 0 is C, 5 octaves below Middle C
     c0 = c5 * pow(0.5, 5);
-    printf("(1) Convert midi note to frequency\n"
-           "(2) Convert frequency to midi note\n"
-           "Choose a conversion: ");
-    scanf("%d", &choice);
-    if(choice != 1 && choice != 2){
-        printf("Please enter 1 or 2\n");
-        return 1;
-    }
+    
+
     //Convert MIDI note to frequency
-    if(choice == 1){
-        printf("Enter MIDI note (0-127):");
-        scanf("%d", &midinote);
+    if(strcmp(choice, "m2f") == 0){
+        midinote = atoi(argv[2]);
         //check for erroneous input
         if(midinote == 150){
             printf("Please enter a valid integer 0-127\n");
@@ -52,20 +53,19 @@ int main() {
         }
         //calculate a frequency for a given Midi Note Number
         frequency = c0 * pow(semitone_ratio, midinote);
-        printf("MIDI Note %d has frequency %f\n", midinote, frequency);
+        printf("\nMIDI Note %d has frequency %f\n", midinote, frequency);
     }
-    if(choice == 2){
-        printf("Enter frequency:");
-        scanf("%lf", &userfreq);
+    if(strcmp(choice, "f2m") == 0){
+        userfreq = atof(argv[2]);
         if(userfreq < 8.175799 || userfreq > 12543.853951){
-            printf("That frequency does not have a MIDI number.\n"
+            printf("\nThat frequency does not have a MIDI number.\n"
                    "Please enter a frequency between 8.175 and 12543.854\n");
             return 5;
         }
         double midinotedec = log(userfreq / c0) / log(semitone_ratio);
         midinote = log(userfreq / c0) / log(semitone_ratio);
         int variance = (midinotedec - midinote)*100;
-        printf("The closest MIDI note to %.2f is %d\n", userfreq, midinote);
+        printf("\nThe closest MIDI note to %.2f is %d\n", userfreq, midinote);
         printf("with a variance of %d%%\n", variance);
     }
     return 0;
